@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+data/*.tmp
+data/activity.jsonl
+data/dev-idp-key.json
+data/backups/

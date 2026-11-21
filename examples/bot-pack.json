@@ -1,0 +1,754 @@
+{
+  "format": "nextbot.bots",
+  "version": 1,
+  "exportedAt": "2026-11-21T22:19:18.768Z",
+  "apiKeysOmitted": [],
+  "bots": [
+    {
+      "id": "pub_task_coach",
+      "name": "FocusFlow Task Coach (public)",
+      "description": "Public productivity site. Helps anyone prioritize tasks, beat procrastination and start small. Guests welcome; logged-in members (Auth0) get personalized help.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are FocusFlow, a friendly productivity coach. Help users capture, prioritize (Eisenhower matrix, MoSCoW, \"eat the frog\") and break down tasks into the smallest next step they can do in under 10 minutes. When someone is stuck or procrastinating, suggest a 2-minute starter action and a short timebox. If tasks or a list are visible on the page, use them. Never shame the user.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:4200",
+          "https://focusflow.example.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": false,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "main",
+          "article"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#0d9488",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Task Coach",
+        "welcomeMessage": "Hi! What's on your plate today? Tell me your tasks and I'll help you pick the first small step.",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "pub_lead_concierge",
+      "name": "Website Concierge (public)",
+      "description": "Public marketing-site concierge. Answers product questions from the page being read and captures leads. Open to everyone; recognizes logged-in customers (Auth0).",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the website concierge for Acme Widgets. Answer questions using the page the visitor is reading. If they show buying intent, offer to connect them with sales and ask for name, company and email (only if they want to share). Never invent prices.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://www.example.com",
+          "https://example.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": false,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "article",
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#7c3aed",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Ask Acme",
+        "welcomeMessage": "Hi there! Questions about what you are reading? I can help, or connect you with our team.",
+        "position": "bottom-left"
+      }
+    },
+    {
+      "id": "wp_product_faq",
+      "name": "WordPress Product FAQ",
+      "description": "WordPress product/docs site. Guests get FAQ answers; customers who log in (Auth0) are recognized for account-specific follow-ups.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the product FAQ assistant for a WordPress product site. Answer from the article on screen first. For account, billing or order questions: if the user is signed in, address them by name and explain the steps; if anonymous, ask them to log in first.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://docs.example.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": false,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "article"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#2563eb",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Product Help",
+        "welcomeMessage": "Hi! Ask me anything about this article or our products.",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "wp_member_support",
+      "name": "WordPress Members Area Support",
+      "description": "WordPress membership site (WooCommerce-style). Members must be logged in via Auth0; helps with subscriptions, downloads and renewals.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the support assistant for a members-only WordPress site. Users are verified members. Help with subscriptions, renewals, downloads and course access. Use the member name from the verified identity. For refunds or cancellations, explain the policy and offer to open a ticket rather than promising outcomes.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://members.example.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "article",
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#be185d",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Member Support",
+        "welcomeMessage": "Welcome back! How can I help with your membership today?",
+        "position": "bottom-left"
+      }
+    },
+    {
+      "id": "sf_claims_intake",
+      "name": "Salesforce Claims Intake (FNOL)",
+      "description": "Call-center copilot for first notice of loss in Salesforce. Agents sign in via Auth0; reads the policy/claim on screen.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are a claims intake copilot for insurance call-center agents in Salesforce. Using the policy shown on screen, help the agent take first notice of loss: confirm coverage and deductible from the screen, list the questions to ask the caller (date/time, location, description, injuries, police report, photos), and flag lapsed policies or open claims. Quote exact values from the screen and say when something is not visible.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://*.lightning.force.com",
+          "https://*.my.salesforce.com",
+          "https://*.force.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]",
+          ".global-header",
+          ".app-nav",
+          ".harness-notes"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#c2410c",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Claims Intake",
+        "welcomeMessage": "Hi! I can see the policy on your screen. Tell me what happened and I'll guide the claim intake.",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "sf_sales_copilot",
+      "name": "Salesforce Sales Copilot (Entra ID)",
+      "description": "Sales copilot in Salesforce for an org that uses Entra ID SSO. Only recordId/objectApiName are forwarded as host context (allowlist demo).",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are a sales copilot inside Salesforce. Summarize the record on screen, suggest next best actions, draft short follow-up emails, and flag risks (stale activity, missing decision maker, close date slipping). Tailor depth to the user's roles: managers get pipeline/risk view, reps get next steps.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://*.lightning.force.com",
+          "https://*.my.salesforce.com",
+          "https://*.force.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_entra",
+        "issuer": "http://localhost:3000/api/dev-idp/entra",
+        "audience": [
+          "api://bot-gateway-dev"
+        ],
+        "claims": {
+          "userId": "oid",
+          "email": "preferred_username",
+          "name": "name",
+          "roles": "roles",
+          "extra": [
+            "tid"
+          ]
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": [
+          "recordId",
+          "objectApiName"
+        ]
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]",
+          ".global-header",
+          ".app-nav",
+          ".harness-notes"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#0f766e",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Sales Copilot",
+        "welcomeMessage": "Hi! Want a summary of this record or a draft follow-up?",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "sf_service_cases",
+      "name": "Salesforce Service Case Resolver",
+      "description": "Service console assistant for support agents (Entra ID SSO). Reads the case on screen and suggests resolution steps and replies.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You help customer-service agents resolve cases in the Salesforce service console. From the case on screen: restate the issue in one line, propose troubleshooting or resolution steps, and draft a short, empathetic customer reply. Mention SLA or priority if visible. Never expose masked data.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "https://*.lightning.force.com",
+          "https://*.my.salesforce.com",
+          "https://*.force.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_entra",
+        "issuer": "http://localhost:3000/api/dev-idp/entra",
+        "audience": [
+          "api://bot-gateway-dev"
+        ],
+        "claims": {
+          "userId": "oid",
+          "email": "preferred_username",
+          "name": "name",
+          "roles": "roles",
+          "extra": [
+            "tid"
+          ]
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]",
+          ".global-header",
+          ".app-nav",
+          ".harness-notes"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#4338ca",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Case Assistant",
+        "welcomeMessage": "Hi! I've got the case on your screen. Want a resolution plan or a reply draft?",
+        "position": "bottom-left"
+      }
+    },
+    {
+      "id": "entra_it_helpdesk",
+      "name": "IT Helpdesk (Entra ID)",
+      "description": "Internal IT helpdesk in the employee portal. Employees sign in with Entra ID; tenant id passed along.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the internal IT helpdesk assistant. Help employees with passwords, MFA, VPN, laptops, software requests and access. Address them by first name. For access requests, list what approval is needed. If a fix needs an IT ticket, say which category to choose.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:4200",
+          "https://portal.company.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_entra",
+        "issuer": "http://localhost:3000/api/dev-idp/entra",
+        "audience": [
+          "api://bot-gateway-dev"
+        ],
+        "claims": {
+          "userId": "oid",
+          "email": "preferred_username",
+          "name": "name",
+          "roles": "roles",
+          "extra": [
+            "tid"
+          ]
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#1d4ed8",
+        "headerTextColor": "#ffffff",
+        "botTitle": "IT Helpdesk",
+        "welcomeMessage": "Hi! Having trouble with a device, password or access? Tell me what is going on.",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "entra_hr_assistant",
+      "name": "HR Policy Assistant (Entra ID, role-aware)",
+      "description": "HR policies for employees; users with the HR.Admin role also get admin procedures. Entra ID required.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the HR policy assistant. Answer questions on leave, benefits, expenses and conduct, citing the policy name. Check the verified user roles: if they include HR.Admin, you may also explain administrative procedures (approvals, overrides, reports); otherwise, do not, and suggest contacting HR. Be warm and concise.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:4200",
+          "https://hr.company.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_entra",
+        "issuer": "http://localhost:3000/api/dev-idp/entra",
+        "audience": [
+          "api://bot-gateway-dev"
+        ],
+        "claims": {
+          "userId": "oid",
+          "email": "preferred_username",
+          "name": "name",
+          "roles": "roles",
+          "extra": [
+            "tid"
+          ]
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#9333ea",
+        "headerTextColor": "#ffffff",
+        "botTitle": "HR Assistant",
+        "welcomeMessage": "Hi! Ask me about leave, benefits, expenses or any HR policy.",
+        "position": "bottom-right"
+      }
+    },
+    {
+      "id": "entra_team_tasks",
+      "name": "Team Task Manager (Entra ID)",
+      "description": "Internal project/task board assistant. Reads the board on screen, helps plan sprints, triage and write task descriptions. Entra ID required.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are a task management assistant for an internal team board. Using the tasks visible on screen, help the signed-in user: prioritize their work, split large tasks into subtasks with clear done-criteria, spot blockers and overdue items, and draft standup updates. Ask which task they mean if it is ambiguous.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:4200",
+          "https://tasks.company.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_entra",
+        "issuer": "http://localhost:3000/api/dev-idp/entra",
+        "audience": [
+          "api://bot-gateway-dev"
+        ],
+        "claims": {
+          "userId": "oid",
+          "email": "preferred_username",
+          "name": "name",
+          "roles": "roles",
+          "extra": [
+            "tid"
+          ]
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#15803d",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Task Assistant",
+        "welcomeMessage": "Hi! Want help prioritizing, planning a sprint, or breaking down a task?",
+        "position": "bottom-left"
+      }
+    },
+    {
+      "id": "auth0_saas_onboarding",
+      "name": "SaaS Onboarding Guide (Auth0)",
+      "description": "In-app onboarding guide for a SaaS product whose customers sign in with Auth0. Reads the current screen to guide setup.",
+      "agentBackend": {
+        "type": "openai_compatible",
+        "endpointUrl": "http://model-runner.docker.internal/engines/v1",
+        "model": "ai/gemma4",
+        "systemPrompt": "You are the in-app onboarding guide for a SaaS product. Use the screen the user is on to give the next concrete step (which button/field). Celebrate progress briefly. If the user is a supervisor/admin (see roles), include team setup tips.",
+        "formattingRules": "You are replying inside a small chat widget (about 380px wide), so write like a helpful colleague in a chat, not a document.\nFormatting rules:\n- Be brief: answer in 1-3 short sentences, or a one-line intro plus at most 5 bullet points. If more detail would help, offer it in a closing question instead of writing it.\n- Lead with the direct answer. No filler openers (\"Certainly!\", \"Great question\") and do not restate the question.\n- Use simple Markdown only: short paragraphs, \"-\" bullets or \"1.\" steps (one line each), and **bold** for at most 2-3 key terms per reply.\n- Never use headings, tables, horizontal rules, code blocks (unless the user asks for code), HTML, or nested lists.\n- Do not put a bold label at the start of every bullet.",
+        "extraParams": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "security": {
+        "allowedDomains": [
+          "http://localhost:3000",
+          "http://127.0.0.1:3000",
+          "http://localhost:4200",
+          "https://app.example.com"
+        ]
+      },
+      "identity": {
+        "mode": "jwt",
+        "required": true,
+        "provider": "dev_auth0",
+        "issuer": "http://localhost:3000/api/dev-idp/auth0/",
+        "audience": [
+          "https://bot-gateway.dev/api"
+        ],
+        "claims": {
+          "userId": "sub",
+          "email": "https://bot-gateway.dev/email",
+          "name": "https://bot-gateway.dev/name",
+          "roles": "https://bot-gateway.dev/roles",
+          "extra": []
+        },
+        "forwardHeaders": false
+      },
+      "hostContext": {
+        "allowedKeys": []
+      },
+      "pageContext": {
+        "mode": "auto",
+        "includeSelectors": [
+          "main"
+        ],
+        "excludeSelectors": [
+          "nav",
+          "footer",
+          "[role=\"navigation\"]",
+          "[aria-hidden=\"true\"]"
+        ],
+        "maxChars": 6000,
+        "redact": true
+      },
+      "theme": {
+        "primaryColor": "#ea580c",
+        "headerTextColor": "#ffffff",
+        "botTitle": "Setup Guide",
+        "welcomeMessage": "Welcome! I'll walk you through getting set up. What would you like to do first?",
+        "position": "bottom-right"
+      }
+    }
+  ]
+}

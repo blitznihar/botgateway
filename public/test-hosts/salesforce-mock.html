@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POL-2024-0081537 | Policy | Salesforce (mock)</title>
+  <style>
+    /* SLDS-flavoured host styles, including broad selectors, to prove the widget is isolated. */
+    * { box-sizing: border-box; }
+    button { font-family: inherit; border-radius: 0 !important; }
+    body { margin: 0; font-family: 'Salesforce Sans', -apple-system, 'Segoe UI', Arial, sans-serif; background: #b0c4df; color: #181818; font-size: 13px; }
+    .global-header { height: 50px; background: #fff; display: flex; align-items: center; padding: 0 16px; gap: 16px; border-bottom: 1px solid #dddbda; }
+    .cloud { width: 34px; height: 24px; background: #0176d3; border-radius: 12px; }
+    .search { flex: 1; max-width: 480px; margin: 0 auto; border: 1px solid #c9c9c9; border-radius: 4px; padding: 7px 12px; color: #706e6b; }
+    .signin { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .signin select, .signin .sbtn { font: inherit; padding: 5px 8px; border: 1px solid #c9c9c9; background: #fff; cursor: pointer; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: #706e6b; color: #fff; display: grid; place-items: center; font-weight: 700; }
+    .app-nav { height: 40px; background: #fff; display: flex; align-items: stretch; padding: 0 16px; gap: 4px; box-shadow: 0 2px 2px rgba(0,0,0,.1); }
+    .app-name { font-size: 18px; font-weight: 300; display: flex; align-items: center; padding-right: 20px; border-right: 1px solid #dddbda; margin-right: 12px; }
+    .tab { display: flex; align-items: center; padding: 0 12px; border-bottom: 3px solid transparent; }
+    .tab.active { border-bottom-color: #0176d3; font-weight: 700; }
+    .wrap { padding: 12px; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+    .card { background: #fff; border-radius: 4px; border: 1px solid #dddbda; box-shadow: 0 2px 2px rgba(0,0,0,.1); padding: 12px 16px; }
+    .record-header { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
+    .record-icon { width: 32px; height: 32px; border-radius: 4px; display: grid; place-items: center; color: #fff; font-weight: 700; background: #3ba755; }
+    .eyebrow { font-size: 12px; color: #444; }
+    .record-title { font-size: 18px; font-weight: 700; }
+    .badge { display: inline-block; background: #2e844a; color: #fff; border-radius: 12px; padding: 1px 8px; font-size: 11px; margin-left: 8px; vertical-align: middle; }
+    .badge.lapsed { background: #ba0517; }
+    h2 { font-size: 14px; margin: 0 0 8px; }
+    .slds-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; margin-bottom: 14px; }
+    .slds-form-element__label { display: block; color: #706e6b; font-size: 12px; }
+    .slds-form-element__static { border-bottom: 1px solid #dddbda; padding: 2px 0 6px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eee; font-size: 12px; }
+    th { color: #706e6b; font-weight: 600; }
+    .record-list { list-style: none; margin: 0; padding: 0; }
+    .record-list li { padding: 8px 0; border-bottom: 1px solid #eee; cursor: pointer; color: #0176d3; }
+    .record-list li.current { color: #181818; font-weight: 700; cursor: default; }
+    code, pre { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+    pre { background: #f3f3f3; border: 1px solid #dddbda; padding: 10px; white-space: pre-wrap; word-break: break-all; margin: 0; }
+    .harness-notes { background: #fff8e6; border: 1px dashed #d9a400; }
+    @media (max-width: 800px) { .wrap { grid-template-columns: 1fr; } .slds-form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="global-header">
+    <div class="cloud" aria-hidden="true"></div>
+    <div class="search">Search Policies, Claims, Contacts…</div>
+    <div class="signin" id="signin"></div>
+  </div>
+  <div class="app-nav">
+    <div class="app-name">Service Console</div>
+    <div class="tab">Home</div>
+    <div class="tab active">Policies</div>
+    <div class="tab">Claims</div>
+    <div class="tab">Contacts</div>
+  </div>
+
+  <div class="wrap">
+    <div class="card record-header">
+      <div class="record-icon">P</div>
+      <div>
+        <div class="eyebrow">Policy</div>
+        <div class="record-title"><span id="record-name"></span><span class="badge" id="record-status"></span></div>
+      </div>
+    </div>
+
+    <main class="card record-main" id="record"></main>
+
+    <div>
+      <div class="card">
+        <h2>Recently viewed policies</h2>
+        <ul class="record-list" id="records"></ul>
+      </div>
+      <div class="card harness-notes" style="margin-top:12px">
+        <h2>Test harness</h2>
+        <p>Simulates an insurance <strong>call center</strong> working policies in Salesforce. The bot reads this screen
+          before every message (this panel is excluded). Open another policy, then ask <em>“who does this policy belong to?”</em></p>
+        <p>Agents sign in through <strong>Auth0</strong> (simulated by the gateway's dev IdP). The widget gets tokens from
+          <code>NextBot.getAuthToken</code>. Sign out to see the bot require sign-in.</p>
+        <p>Bot: <strong id="bot-id"></strong> · Host origin: <strong id="origin"></strong></p>
+        <pre id="snippet"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var POLICIES = [
+        {
+          id: 'a0B5e00000PolA1', number: 'POL-2024-0081537', status: 'Active', product: 'Homeowners (HO-3)',
+          holder: 'Margaret Chen', dob: '03/14/1968', ssn: '123-45-6789', phone: '(555) 201-4477', email: 'm.chen@example.com',
+          address: '1842 Willow Creek Dr, Burlington, VT 05401', effective: '04/01/2026', expiration: '04/01/2027',
+          premium: '$1,842.00 / year', deductible: '$1,000', dwelling: '$425,000', liability: '$300,000',
+          billing: 'Monthly autopay', card: '4111 1111 1111 1111', agency: 'Rivera Insurance Agency',
+          claims: [['CLM-778120', '02/11/2026', 'Water damage, kitchen', 'Closed, paid $6,420'], ['CLM-781455', '10/03/2026', 'Hail, roof', 'Open, adjuster assigned']],
+        },
+        {
+          id: 'a0B5e00000PolB2', number: 'POL-2023-0045219', status: 'Lapsed', product: 'Auto (Personal)',
+          holder: 'David Okafor', dob: '11/02/1985', ssn: '987-65-4320', phone: '(555) 310-9902', email: 'dokafor@example.com',
+          address: '77 Harbor St, Portland, ME 04101', effective: '09/15/2025', expiration: '09/15/2026',
+          premium: '$1,296.00 / year', deductible: '$500', dwelling: 'n/a', liability: '$100,000 / $300,000',
+          billing: 'Invoice, last payment missed 08/15/2026', card: 'none on file', agency: 'Direct',
+          claims: [['CLM-760031', '06/22/2026', 'Rear-end collision', 'Closed, paid $3,180']],
+        },
+        {
+          id: 'a0B5e00000PolC3', number: 'POL-2025-0102288', status: 'Active', product: 'Umbrella',
+          holder: 'Priya Natarajan', dob: '07/29/1979', ssn: '222-33-4444', phone: '(555) 404-1188', email: 'priya.n@example.com',
+          address: '9 Elm Ct, Hanover, NH 03755', effective: '01/01/2026', expiration: '01/01/2027',
+          premium: '$412.00 / year', deductible: '$0', dwelling: 'n/a', liability: '$2,000,000',
+          billing: 'Annual, paid in full', card: '5500 0000 0000 0004', agency: 'Rivera Insurance Agency',
+          claims: [],
+        },
+      ];
+
+      var q = new URLSearchParams(location.search);
+      var botId = q.get('botId') || 'bot_salesforce';
+      if (!/^[a-z0-9][a-z0-9_-]{1,63}$/.test(botId)) botId = 'bot_salesforce';
+      // Test-harness only: restrict the gateway override to localhost/127.0.0.1.
+      var gateway = location.origin;
+      try {
+        var g = new URL(q.get('gateway') || location.origin);
+        if ((g.protocol === 'http:' || g.protocol === 'https:') && (g.hostname === 'localhost' || g.hostname === '127.0.0.1')) gateway = g.origin;
+      } catch (e) {}
+
+      function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+      function field(label, value) {
+        return '<div class="slds-form-element"><span class="slds-form-element__label">' + esc(label) + '</span><div class="slds-form-element__static">' + esc(value) + '</div></div>';
+      }
+
+      var current = POLICIES[0];
+      function render() {
+        var p = current;
+        document.title = p.number + ' | Policy | Salesforce (mock)';
+        document.getElementById('record-name').textContent = p.number + ' · ' + p.product;
+        var st = document.getElementById('record-status');
+        st.textContent = p.status; st.className = 'badge' + (p.status === 'Lapsed' ? ' lapsed' : '');
+        document.getElementById('record').innerHTML =
+          '<h2>Policy Information</h2><div class="slds-form">' +
+            field('Policy Number', p.number) + field('Status', p.status) + field('Product', p.product) + field('Servicing Agency', p.agency) +
+            field('Effective Date', p.effective) + field('Expiration Date', p.expiration) + field('Annual Premium', p.premium) + field('Deductible', p.deductible) +
+            field('Coverage A, Dwelling', p.dwelling) + field('Liability Limit', p.liability) +
+          '</div><h2>Policyholder</h2><div class="slds-form">' +
+            field('Named Insured', p.holder) + field('Date of Birth', p.dob) + field('SSN', p.ssn) + field('Phone', p.phone) +
+            field('Email', p.email) + field('Mailing Address', p.address) +
+          '</div><h2>Billing</h2><div class="slds-form">' +
+            field('Billing Plan', p.billing) + field('Card on File', p.card) +
+          '</div><h2>Claims (' + p.claims.length + ')</h2>' +
+          (p.claims.length
+            ? '<table><thead><tr><th>Claim #</th><th>Date of Loss</th><th>Description</th><th>Status</th></tr></thead><tbody>' +
+              p.claims.map(function (c) { return '<tr>' + c.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>'
+            : '<p>No claims on this policy.</p>');
+        var list = document.getElementById('records');
+        list.innerHTML = '';
+        POLICIES.forEach(function (r) {
+          var li = document.createElement('li');
+          li.textContent = r.number + ' · ' + r.holder;
+          li.setAttribute('data-record-id', r.id);
+          if (r === current) li.className = 'current';
+          list.appendChild(li);
+        });
+      }
+
+      document.getElementById('records').addEventListener('click', function (e) {
+        var li = e.target.closest('li[data-record-id]');
+        if (!li) return;
+        var next = POLICIES.find(function (r) { return r.id === li.getAttribute('data-record-id'); });
+        if (!next || next === current) return;
+        current = next;
+        render();
+        // Explicit context too (what an LWC would send): exact ids the agent backend can look up.
+        if (window.NextBot && window.NextBot.setContext) window.NextBot.setContext({ recordId: current.id, objectApiName: 'Policy__c' });
+      });
+
+      // ---- Simulated Auth0 sign-in (dev IdP) --------------------------------------------------
+      // ?idp=entra simulates an org whose Salesforce users sign in with Entra ID instead of Auth0.
+      var IDP = q.get('idp') === 'entra' ? 'entra' : 'auth0';
+      var signedInAs = q.get('signedOut') === '1' ? null : (q.get('agent') || 'alice');
+      function renderSignin() {
+        var box = document.getElementById('signin');
+        box.innerHTML = signedInAs
+          ? (IDP === 'entra' ? 'Entra ID' : 'Auth0') + ': <select id="agent"><option value="alice">Alice Morgan (agent)</option><option value="carol">Carol Reyes (supervisor)</option></select><button class="sbtn" id="signout">Sign out</button><div class="avatar">' + signedInAs[0].toUpperCase() + '</div>'
+          : '<button class="sbtn" id="signinbtn">Sign in with ' + (IDP === 'entra' ? 'Microsoft' : 'Auth0') + '</button>';
+        if (signedInAs) {
+          document.getElementById('agent').value = signedInAs;
+          document.getElementById('agent').onchange = function (e) { signedInAs = e.target.value; renderSignin(); refresh(); };
+          document.getElementById('signout').onclick = function () { signedInAs = null; renderSignin(); window.NextBot && window.NextBot.setAuthToken && window.NextBot.setAuthToken(null); };
+        } else {
+          document.getElementById('signinbtn').onclick = function () { signedInAs = 'alice'; renderSignin(); refresh(); };
+        }
+      }
+      function refresh() { if (window.NextBot && window.NextBot.setAuthToken) window.NextBot.getAuthToken().then(window.NextBot.setAuthToken); }
+
+      var tokenCalls = 0;
+      render();
+      renderSignin();
+
+      // Like auth0.getAccessTokenSilently(): returns a fresh, short-lived token, or null when signed out.
+      window.NextBot = {
+        context: { recordId: current.id, objectApiName: 'Policy__c', app: 'service-console' },
+        getAuthToken: function () {
+          if (!signedInAs) return Promise.resolve(null);
+          tokenCalls++;
+          // ?expireFirst=1 (testing): the first token is already expired, to exercise the refresh flow.
+          var ttl = q.get('expireFirst') === '1' && tokenCalls === 1 ? -120 : (q.get('ttl') || 300);
+          return fetch(gateway + '/api/dev-idp/' + IDP + '/token?ttl=' + ttl + '&user=' + (IDP === 'entra' ? (signedInAs === 'carol' ? 'bob' : 'jane') : signedInAs))
+            .then(function (r) { return r.json(); })
+            .then(function (d) { return d.access_token || null; });
+        },
+      };
+
+      var s = document.createElement('script');
+      s.src = gateway + '/widget.js';
+      s.async = true;
+      s.setAttribute('data-bot-id', botId);
+      document.body.appendChild(s);
+
+      document.getElementById('snippet').textContent = s.outerHTML + '\n\n<script>\n  window.NextBot = { getAuthToken: () => auth0.getAccessTokenSilently() };\n<\/script>';
+      document.getElementById('bot-id').textContent = botId;
+      document.getElementById('origin').textContent = location.origin;
+    })();
+  </script>
+</body>
+</html>

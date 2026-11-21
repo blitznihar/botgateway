@@ -1,0 +1,27 @@
+services:
+  bot-control-plane:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+      # TEST-ONLY identity provider that issues Entra-ID-style and Auth0-style tokens for the test hosts.
+      # Anyone who can reach the gateway can mint tokens for it: set to false (and point bots at your real
+      # Auth0 / Entra ID tenants) before exposing this anywhere.
+      - ENABLE_DEV_IDP=true
+      # Protect the admin UI, /activity and admin APIs with HTTP Basic auth (strongly recommended outside localhost):
+      # - ADMIN_USER=admin
+      # - ADMIN_PASSWORD=change-me
+      # Public origin of this gateway when running behind a reverse proxy:
+      # - PUBLIC_BASE_URL=https://bots.company.com
+    # Makes Compose pull ai/gemma4 into Docker Model Runner on `up`. Bots don't read anything from here:
+    # each bot's endpoint URL, model and API key are set in the admin UI (stored in data/bots.json).
+    models:
+      - gemma4
+    restart: unless-stopped
+
+models:
+  gemma4:
+    model: ai/gemma4

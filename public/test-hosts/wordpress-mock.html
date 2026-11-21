@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acme Widgets – Just another WordPress site</title>
+  <style>
+    /* Typical theme CSS with broad selectors, to prove the widget launcher is isolated. */
+    body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #2c3338; background: #fff; line-height: 1.7; }
+    button, iframe { border: 5px dashed hotpink !important; }
+    a { color: #b5442b; }
+    .site-header { border-bottom: 1px solid #e5e5e5; padding: 28px 24px; text-align: center; }
+    .site-title { font-size: 34px; margin: 0; letter-spacing: -0.5px; }
+    .site-description { margin: 4px 0 0; color: #646970; font-style: italic; }
+    .menu { display: flex; justify-content: center; gap: 24px; padding: 12px; font-family: -apple-system, sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .menu a { text-decoration: none; color: #2c3338; }
+    article { max-width: 720px; margin: 40px auto; padding: 0 24px; }
+    article h2 { font-size: 30px; line-height: 1.25; margin-bottom: 4px; }
+    .meta { color: #646970; font-size: 14px; font-family: -apple-system, sans-serif; margin-bottom: 24px; }
+    pre { background: #f6f7f7; border: 1px solid #dcdcde; padding: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+    footer { text-align: center; color: #646970; font-size: 13px; padding: 40px 24px; border-top: 1px solid #e5e5e5; font-family: -apple-system, sans-serif; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title">Acme Widgets</h1>
+    <p class="site-description">Just another WordPress site</p>
+  </header>
+  <nav class="menu"><a href="#">Home</a><a href="#">Products</a><a href="#">Pricing</a><a href="#">Contact</a><a href="#" id="login">Log in</a></nav>
+
+  <article>
+    <h2>Hello world! Meet our new website assistant</h2>
+    <div class="meta">Posted on November 21, 2026 by admin · Uncategorized</div>
+    <p>This page simulates a public WordPress site. The chatbot was added by pasting a single
+      <code>&lt;script&gt;</code> tag into a "Custom HTML" block (or the theme footer). No plugin, no build step.</p>
+    <p>Notice the theme's hostile CSS (it puts a dashed pink border on every <code>button</code> and <code>iframe</code>).
+      The launcher is unaffected because it renders inside a Shadow DOM.</p>
+    <p>Visitors chat as guests. Customers can <strong>log in</strong> (Auth0, simulated by the gateway's dev IdP) and the bot
+      then knows who they are, with no change to the embed code.</p>
+    <p>Bot on this page: <strong id="bot-id"></strong> · Host origin: <strong id="origin"></strong></p>
+    <h3>Embed code used</h3>
+    <pre id="snippet"></pre>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
+      Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p>
+  </article>
+
+  <footer>Proudly powered by WordPress (mock)</footer>
+
+  <!-- Equivalent to: <script src="http://localhost:3000/widget.js" data-bot-id="bot_wordpress" async></script> -->
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var botId = q.get('botId') || 'bot_wordpress';
+      if (!/^[a-z0-9][a-z0-9_-]{1,63}$/.test(botId)) botId = 'bot_wordpress';
+
+      // Test-harness only: restrict the gateway override to localhost/127.0.0.1.
+      var gateway = location.origin;
+      try {
+        var g = new URL(q.get('gateway') || location.origin);
+        if ((g.protocol === 'http:' || g.protocol === 'https:') && (g.hostname === 'localhost' || g.hostname === '127.0.0.1')) gateway = g.origin;
+      } catch (e) {}
+
+      // Optional customer login (Auth0). Guests: getAuthToken resolves to null.
+      var loggedIn = q.get('login') === '1';
+      var loginLink = document.getElementById('login');
+      function renderLogin() { loginLink.textContent = loggedIn ? 'Log out' : 'Log in'; }
+      loginLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        loggedIn = !loggedIn;
+        renderLogin();
+        if (window.NextBot.setAuthToken) window.NextBot.getAuthToken().then(window.NextBot.setAuthToken);
+      });
+      renderLogin();
+
+      window.NextBot = {
+        context: { site: 'acme-wordpress', pageType: 'post', postId: 1 },
+        getAuthToken: function () {
+          if (!loggedIn) return Promise.resolve(null);
+          return fetch(gateway + '/api/dev-idp/' + (q.get('idp') === 'entra' ? 'entra/token?user=jane' : 'auth0/token?user=dana'))
+            .then(function (r) { return r.json(); })
+            .then(function (d) { return d.access_token || null; });
+        },
+      };
+
+      var s = document.createElement('script');
+      s.src = gateway + '/widget.js';
+      s.async = true;
+      s.setAttribute('data-bot-id', botId);
+      document.body.appendChild(s);
+
+      document.getElementById('snippet').textContent = s.outerHTML;
+      document.getElementById('bot-id').textContent = botId;
+      document.getElementById('origin').textContent = location.origin;
+    })();
+  </script>
+</body>
+</html>

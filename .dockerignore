@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+*.tsbuildinfo
+Dockerfile
+docker-compose.yml
+data/*.tmp
+data/activity.jsonl
+data/dev-idp-key.json
+data/backups
