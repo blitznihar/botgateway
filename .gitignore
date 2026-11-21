@@ -8,3 +8,6 @@ data/*.tmp
 data/activity.jsonl
 data/dev-idp-key.json
 data/backups/
+
+# macOS
+.DS_Store
