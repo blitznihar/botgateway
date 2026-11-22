@@ -29,6 +29,10 @@ More results (a Salesforce call-center copilot and a role-aware Entra ID assista
 The [**user guide**](docs/USER-GUIDE.md) walks through every editor section with screenshots. It also has Angular
 (MSAL / Auth0), WordPress and Salesforce embedding, testing, a go-live checklist and troubleshooting.
 
+The [**build specification**](docs/BUILD-SPEC.md) is the complete instruction file for building Bot Gateway from
+scratch: data model, validation rules, APIs, the widget's message protocol, identity and screen-awareness logic,
+Docker setup and acceptance tests.
+
 ## Architecture
 
 ### Conceptual diagram
