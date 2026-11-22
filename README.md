@@ -6,6 +6,54 @@ Multi-tenant control plane + embeddable chat widget. Configure bots at `/`, watc
 <script src="https://YOUR-GATEWAY/widget.js" data-bot-id="bot_internal_1" async></script>
 ```
 
+![Task Coach bot reading an Angular to-do app](docs/images/result-angular-task-coach.png)
+
+*The `pub_task_coach` bot on an Angular app (`localhost:4200`): it reads the task list on screen and helps prioritize it.
+More results (a Salesforce call-center copilot and a role-aware Entra ID assistant) are in the
+[user guide](docs/USER-GUIDE.md#what-you-get).*
+
+## Quick start: create and use a bot
+
+1. **Run it:** `docker compose up --build -d`, then open <http://localhost:3000>.
+2. **Create a bot:** click **+ Create New Bot** (sign-in verification, screen reading and Gemma 4 come pre-configured). Set a Bot ID, name and look, and add your site under **Allowed domains** (e.g. `http://localhost:4200`). Choose who the users are under **User Identity** (guests, Auth0 or Entra ID), click **Test connection** under Agent Routing, then **Create bot**.
+3. **Embed it:** copy the snippet from the right-hand column into your page (`src/index.html` for Angular):
+
+   ```html
+   <script src="http://localhost:3000/widget.js" data-bot-id="pub_task_coach" async></script>
+   ```
+
+   For signed-in users, also give the widget a token provider: `window.NextBot = { getAuthToken: () => /* MSAL or Auth0 access token */ }`.
+4. **Use it:** open your site, click the launcher, and ask about what's on screen ("help me arrange my tasks", "who does this policy belong to?").
+5. **Watch it:** **Activity** shows every chat with the verified user and what the bot saw on screen.
+
+The [**user guide**](docs/USER-GUIDE.md) walks through every editor section with screenshots. It also has Angular
+(MSAL / Auth0), WordPress and Salesforce embedding, testing, a go-live checklist and troubleshooting.
+
+The [**build specification**](docs/BUILD-SPEC.md) is the complete instruction file for building Bot Gateway from
+scratch: data model, validation rules, APIs, the widget's message protocol, identity and screen-awareness logic,
+Docker setup and acceptance tests.
+
+## Architecture
+
+### Conceptual diagram
+
+One gateway serves many bots. Host sites embed `widget.js`. The gateway verifies users against each site's
+identity provider, reads the screen they're on, and routes the chat to the bot's OpenAI-compatible agent.
+
+![Conceptual architecture](docs/conceptual.drawio.svg)
+
+### End-to-end flow
+
+From configuring a bot to a screen-aware answer ("Who does this policy belong to?"), including identity verification
+and silent token refresh.
+
+![End-to-end flow](docs/end-to-end.drawio.svg)
+
+**Editing the diagrams:** the source is [`docs/architecture.drawio`](docs/architecture.drawio), one file with two pages.
+Open it in [draw.io](https://app.diagrams.net) or the VS Code *Draw.io Integration* extension, then run
+`docs/export-diagrams.sh` to refresh the two `.drawio.svg` images above. Those SVGs also embed the diagram, so they can
+be opened and edited in draw.io directly.
+
 ## Run
 
 ```bash
